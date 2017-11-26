@@ -2,6 +2,7 @@ import scipy.io
 import numpy as np
 import os
 import sys
+import pickle
 from dependency_parse import *
 from config_environment import *
 
@@ -154,7 +155,7 @@ def pre_process(file, cat_map):
 
 def get_dependency(sentences, opt_options="basicDependencies"): # basicDependencies / treeDependencies
     dependency_results = []
-    p = Parse(opt_options=opt_options)
+    p = Parse(opt_options=opt_options, root=stanford_corenlp_root_path)
     for i in range(0, len(sentences)):
         # 原始数据中的句子格式存在一定的错误，因此会有一些解析错误
         # 用下面的方法来弥补一下, 去掉最后一个. 补充为" .\n"
