@@ -29,7 +29,7 @@ word_vec_file_state = ["deps", "glove.6B.50d", "glove.6B.100d", "glove.6B.200d",
                        "glove.twitter.27B.50d", "glove.twitter.27B.100d", "glove.twitter.27B.200d"]
 
 
-
+# list中项的顺序不要动，会翻车的
 cat_names = \
     ['Cause-Effect(e1,e2)', 'Component-Whole(e1,e2)', 'Content-Container(e1,e2)', 'Entity-Destination(e1,e2)',
      'Entity-Origin(e1,e2)', 'Instrument-Agency(e1,e2)', 'Member-Collection(e1,e2)', 'Message-Topic(e1,e2)',
@@ -38,11 +38,12 @@ cat_names = \
      'Message-Topic(e2,e1)', 'Product-Producer(e2,e1)']
 
 
+# label标注为 0-18 在后面转化成稀疏向量的时候，不会发生索引越界
 def create_cat_map(cat_names):
     cat_map = {}
     label = 0
     for cat in cat_names:
-        cat_map[cat_names[label]] = label + 1
+        cat_map[cat_names[label]] = label
         label += 1
     return cat_map
 

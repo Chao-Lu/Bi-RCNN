@@ -6,6 +6,7 @@ import re
 
 from config_environment import *
 from sentence_clean import *
+from util import *
 
 # Special vocabulary symbols - we always put them at the start.
 _PAD = "_pad"
@@ -218,6 +219,13 @@ def create_word_vocabulary(sdp_words_list, word_vec_file, index):
 
     return word_list, word_map, word_vec_matrix
 
+def get_rev(data):
+    data_rev = copy.deepcopy(data)
+    for i in range(len(data_rev)):
+        data_rev[i].reverse()
+    return data_rev
+
+
 def generate_data(index=3):
     """
     :param index: the index of  ["deps", "glove.6B.50d", "glove.6B.100d", "glove.6B.200d",
@@ -256,10 +264,34 @@ def generate_data(index=3):
     sdp_rels_index_test = transfer_to_index(rel_map, sdp_rels_test)
     print("generate sdp index data finished")
 
-    return word_vec_matrix, sdp_words_index_train, sdp_words_index_test, sdp_rels_index_train, sdp_rels_index_test
+    data = {
+        "word_vec_matrix": word_vec_matrix,
+        "cat_map": cat_map,
+
+        "sdp_words_index_train": sdp_words_index_train,
+        "sdp_words_index_rev_train": get_rev(sdp_words_index_train),
+        "sdp_rels_index_train": sdp_rels_index_train,
+        "sdp_rels_index_rev_train": get_rev(sdp_rels_index_train),
+        "sentence_label_train": sentence_label_train,
+
+        "sdp_words_index_test": sdp_words_index_test,
+        "sdp_words_index_rev_test": get_rev(sdp_words_index_test),
+        "sdp_rels_index_test": sdp_rels_index_test,
+        "sdp_rels_index_rev_test": get_rev(sdp_rels_index_test),
+        "sentence_label_test": sentence_label_test,
+    }
+    return data
 
 if __name__ == '__main__':
-    print("start to generate data")
-    word_vec_matrix, sdp_words_index_train, sdp_words_index_test, sdp_rels_index_train, sdp_rels_index_test = \
-        generate_data(index=3)
-    print("start to transfer to tf data")
+    for index in range(0, 7):
+        file_name = "data/final_data/data_" + word_vec_file_state[index] + ".pkl"
+        if not os.path.exists(file_name):
+            print("start to generate data")
+            data = generate_data(index)
+            print("save data")
+            save_object(file_name, data)
+        else:
+            print(file_name + " already exist")
+
+
+
