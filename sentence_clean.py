@@ -5,16 +5,7 @@ import sys
 import pickle
 from dependency_parse import *
 from config_environment import *
-
-def saveObject(object_file, object):
-    with open(object_file, 'wb+') as f:
-        pickle.dump(object, f)
-
-def loadObject(object_file):
-    with open(object_file, 'rb+') as f:
-        return pickle.load(f)
-
-
+from util import *
 
 def format_line(line):
     # This will take in a raw input sentence and return [[element strings], [indicies of elements], [sentence with elements removed]]
@@ -198,15 +189,15 @@ def get_sentence_process():
     # 获取依存分析结果(时间较长，因此缓存)
     if not os.path.exists("data/dep_rsts_train.pkl"):
         dep_rsts_train = get_dependency(raw_sentences_train)
-        saveObject("data/dep_rsts_train.pkl", dep_rsts_train)
+        save_object("data/dep_rsts_train.pkl", dep_rsts_train)
     else:
-        dep_rsts_train = loadObject("dep_rsts_train.pkl")
+        dep_rsts_train = load_object("dep_rsts_train.pkl")
 
     if not os.path.exists("data/dep_rsts_test.pkl"):
         dep_rsts_test = get_dependency(raw_sentences_test)
-        saveObject("data/dep_rsts_test.pkl", dep_rsts_test)
+        save_object("data/dep_rsts_test.pkl", dep_rsts_test)
     else:
-        dep_rsts_test = loadObject("dep_rsts_test.pkl")
+        dep_rsts_test = load_object("dep_rsts_test.pkl")
 
     # 对entity的位置索引进行矫正
     entity_ind_train = get_exact_index(dep_rsts_train, entity_strings_train, entity_ind_train)
@@ -216,8 +207,8 @@ def get_sentence_process():
     sdp_rsts_test = get_sdp_path(entity_strings_test, entity_ind_test, dep_rsts_test)
     """
 
-    sdp_rsts_train = loadObject("data/sdp_data/generate_by_java/sdp_rsts_train.pkl")
-    sdp_rsts_test = loadObject("data/sdp_data/generate_by_java/sdp_rsts_test.pkl")
+    sdp_rsts_train = load_object("data/sdp_data/generate_by_java/sdp_rsts_train.pkl")
+    sdp_rsts_test = load_object("data/sdp_data/generate_by_java/sdp_rsts_test.pkl")
 
     return cat_map, sentence_label_train, sentence_label_test, sdp_rsts_train, sdp_rsts_test
 
