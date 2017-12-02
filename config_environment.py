@@ -1,25 +1,27 @@
 stanford_corenlp_root_path = r"C:/stanford-corenlp-full-2017-06-09/stanford-corenlp-full-2017-06-09/"
 
+
+word_wec_path = "C:/Users/Administrator/Desktop/wordwec/"
 # copus__dimension__vocabulary size__author__architecture__training algorithm__context window
 # ----------------------------------  Word2Vec  ------------------------------------------------------
 # Google News___300d___3M___Google___word2vec___negative sampling___BoW - ~5
-word_vec_file1 = "C:/Users/Administrator/Desktop/wordwec/deps.words/deps.words"
+word_vec_file1 = word_wec_path + "deps.words/deps.words"
 
 # -----------------------------------  GloVe  --------------------------------------------------------
 # Twitter___50d___1.2M___Glove___GloVe___GloVe___AdaGrad
-word_vec_file2 = "C:/Users/Administrator/Desktop/wordwec/glove.6B/glove.6B.50d.txt"
+word_vec_file2 = word_wec_path + "glove.6B/glove.6B.50d.txt"
 # Twitter___100d___1.2M___Glove___GloVe___GloVe___AdaGrad
-word_vec_file3 = "C:/Users/Administrator/Desktop/wordwec/glove.6B/glove.6B.100d.txt"
+word_vec_file3 = word_wec_path + "glove.6B/glove.6B.100d.txt"
 # Twitter___200d___1.2M___Glove___GloVe___GloVe___AdaGrad
-word_vec_file4 = "C:/Users/Administrator/Desktop/wordwec/glove.6B/glove.6B.200d.txt"
+word_vec_file4 = word_wec_path + "glove.6B/glove.6B.200d.txt"
 
 # ------------------------------------  GloVe  -------------------------------------------------------
 # Wikipedia+Gigaword5___50d___400,000___Glove___GloVe___AdaGrad___10+10
-word_vec_file5 = "C:/Users/Administrator/Desktop/wordwec/glove.twitter.27B/glove.twitter.27B.50d.txt"
+word_vec_file5 = word_wec_path + "glove.twitter.27B/glove.twitter.27B.50d.txt"
 # Wikipedia+Gigaword5___100d___400,000___Glove___GloVe___AdaGrad___10+10
-word_vec_file6 = "C:/Users/Administrator/Desktop/wordwec/glove.twitter.27B/glove.twitter.27B.100d.txt"
+word_vec_file6 = word_wec_path + "glove.twitter.27B/glove.twitter.27B.100d.txt"
 # Wikipedia+Gigaword5___200d___400,000___Glove___GloVe___AdaGrad___10+10
-word_vec_file7 = "C:/Users/Administrator/Desktop/wordwec/glove.twitter.27B/glove.twitter.27B.200d.txt"
+word_vec_file7 = word_wec_path + "glove.twitter.27B/glove.twitter.27B.200d.txt"
 
 # 存成字典，方便索引
 word_vec_file = \
