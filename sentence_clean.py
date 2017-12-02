@@ -63,6 +63,24 @@ def end_two_words(word):
     return word.find('<e') == -1
 
 
+def parse_rela(element):
+    lbracket = element.index('(')
+    rbracket = element.rindex(')')
+
+    comma_index = element.index(', ')
+    part_one = element[lbracket+1:comma_index]
+    part_two = element[comma_index+2:rbracket]
+
+    line1_loc = part_one.rindex('-')
+    gov_word = part_one[0:line1_loc]
+    gov_index = part_one[line1_loc+1:]
+
+    line2_loc = part_two.rindex('-')
+    dep_word = part_two[0:line2_loc]
+    dep_index = part_two[line2_loc+1:]
+    rela = element[0:lbracket]
+
+    return gov_word, int(gov_index), dep_word, int(dep_index), rela
 
 # 对一个entity的位置进行矫正
 def correct_single_index(dependency, entity, id):
@@ -77,6 +95,7 @@ def correct_single_index(dependency, entity, id):
 
     for i in range(0, len(dependency)):
         str = dependency[i]
+        """
         str2 = re.split("[()]", str)
         str3 = str2[1].split(", ")
         word1_sep = last_index(str3[0], "-")
@@ -86,6 +105,8 @@ def correct_single_index(dependency, entity, id):
         word1_index = int(str3[0][word1_sep+1:])
         word2 = str3[1][:word2_sep]
         word2_index = int(str3[1][word2_sep+1:])
+        """
+        word1, word1_index, word2, word2_index, rela = parse_rela(str)
 
         if word1.lower() == entity.lower() and (abs(word1_index-id))<min_sep:
             min_sep = abs(word1_index-id)
@@ -93,12 +114,15 @@ def correct_single_index(dependency, entity, id):
         if word2.lower() == entity.lower() and (abs(word2_index-id))<min_sep:
             min_sep = abs(word2_index-id)
             index = word2_index
+
     if index == 0:
         print(dependency)
         print(entity)
         print(id)
+        print(min_sep)
         #raise IOError("Something wrong")
-    print(min_sep)
+    if min_sep > 4:
+        print(min_sep)
     return index
 
 def get_exact_index(dependency_result, entity_string, entity_id):
@@ -106,7 +130,7 @@ def get_exact_index(dependency_result, entity_string, entity_id):
     for i in range(0, len(dependency_result)):
         #print(dependency_result[i], entity_string[i][0], entity_id[i][0])
         #print(dependency_result[i], entity_string[i][1], entity_id[i][1])
-        #print(i)
+        print(i)
         entity_id[i][0] = correct_single_index(dependency_result[i], entity_string[i][0], entity_id[i][0])
         entity_id[i][1] = correct_single_index(dependency_result[i], entity_string[i][1], entity_id[i][1])
     return entity_id
@@ -173,7 +197,7 @@ def get_sdp_path(entity_strings, entity_ind, dependency):
         sdp_paths.append(sdp_path)
     return sdp_paths
 
-def get_sentence_process():
+def get_sentence_process(dep_typ="basic_dependency"):
     # 建立好关系的映射
     cat_map = create_cat_map(cat_names)
 
@@ -186,18 +210,21 @@ def get_sentence_process():
         pre_process(test_data_file, cat_map)
 
     """
+    # 使用python调用cmd命令行来获取进行依存解析，效果不如java接口，弃用
     # 获取依存分析结果(时间较长，因此缓存)
-    if not os.path.exists("data/dep_rsts_train.pkl"):
+    dep_train_file = "data/dependency_rst/" + dep_typ + "/dep_rsts_train.pkl"
+    dep_test_file = "data/dependency_rst/" + dep_typ + "/dep_rsts_test.pkl"
+    if not os.path.exists(dep_train_file):
         dep_rsts_train = get_dependency(raw_sentences_train)
-        save_object("data/dep_rsts_train.pkl", dep_rsts_train)
+        save_object(dep_train_file, dep_rsts_train)
     else:
-        dep_rsts_train = load_object("dep_rsts_train.pkl")
+        dep_rsts_train = load_object(dep_train_file)
 
-    if not os.path.exists("data/dep_rsts_test.pkl"):
+    if not os.path.exists(dep_test_file):
         dep_rsts_test = get_dependency(raw_sentences_test)
-        save_object("data/dep_rsts_test.pkl", dep_rsts_test)
+        save_object(dep_test_file, dep_rsts_test)
     else:
-        dep_rsts_test = load_object("dep_rsts_test.pkl")
+        dep_rsts_test = load_object(dep_test_file)
 
     # 对entity的位置索引进行矫正
     entity_ind_train = get_exact_index(dep_rsts_train, entity_strings_train, entity_ind_train)
@@ -205,15 +232,27 @@ def get_sentence_process():
     # 获取最短依存路径
     sdp_rsts_train = get_sdp_path(entity_strings_train, entity_ind_train, dep_rsts_train)
     sdp_rsts_test = get_sdp_path(entity_strings_test, entity_ind_test, dep_rsts_test)
+
+    sdp_file_name_train = "data/sdp_data/generate_by_python_" + dep_typ + "/sdp_rsts_train.pkl"
+    sdp_file_name_test = "data/sdp_data/generate_by_python_" + dep_typ + "/sdp_rsts_test.pkl"
+    save_object(sdp_file_name_train, sdp_rsts_train)
+    save_object(sdp_file_name_test, sdp_rsts_test)
+    # --------------------------------此段代码弃用---------------------------------------------
     """
 
+    # 默认还是使用java生成的sdp结果，python生成的会有大约十个句子解析错误
     sdp_rsts_train = load_object("data/sdp_data/generate_by_java/sdp_rsts_train.pkl")
     sdp_rsts_test = load_object("data/sdp_data/generate_by_java/sdp_rsts_test.pkl")
 
+    # 事实证明 还是java写的更加靠谱
     return cat_map, sentence_label_train, sentence_label_test, sdp_rsts_train, sdp_rsts_test
 
 
-
+"""
+if __name__ == "__main__":
+    get_sentence_process("basic_dependency")
+    #get_sentence_process("tree_dependency")  # something wrong
+"""
 
 
 
