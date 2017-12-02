@@ -138,9 +138,9 @@ class ShortestDepenencyPath:
             lbracket = element.index('(')
             rbracket = element.rindex(')')
 
-            comma_index = element.index(',')
+            comma_index = element.index(', ')
             part_one = element[lbracket+1:comma_index]
-            part_two = element[comma_index+1:rbracket]
+            part_two = element[comma_index+2:rbracket]
 
             line1_loc = part_one.rindex('-')
             gov_word = part_one[0:line1_loc]
@@ -149,6 +149,7 @@ class ShortestDepenencyPath:
             line2_loc = part_two.rindex('-')
             dep_word = part_two[0:line2_loc]
             dep_index = part_two[line2_loc+1:]
+
             rela = element[0:lbracket]
 
             dep_relation = DependentTreeRela()
