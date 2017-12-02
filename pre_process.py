@@ -267,6 +267,8 @@ def generate_data(index=3):
     data = {
         "word_vec_matrix": word_vec_matrix,
         "cat_map": cat_map,
+        "rel_map": rel_map,
+        "word_map": word_map,
 
         "sdp_words_index_train": sdp_words_index_train,
         "sdp_words_index_rev_train": get_rev(sdp_words_index_train),
@@ -282,6 +284,7 @@ def generate_data(index=3):
     }
     return data
 
+"""
 if __name__ == '__main__':
     for index in range(0, 7):
         file_name = "data/final_data/data_" + word_vec_file_state[index] + ".pkl"
@@ -292,6 +295,7 @@ if __name__ == '__main__':
             save_object(file_name, data)
         else:
             print(file_name + " already exist")
+"""
 
 
 
