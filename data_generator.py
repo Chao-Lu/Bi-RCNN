@@ -5,8 +5,10 @@ from util import *
 
 class DataGenerator(object):
 
-    def __init__(self, data_file):
+    def __init__(self, data_file, inverse_other=True):
         data = load_object(data_file)
+        if not inverse_other:
+            data = self.re_inverse(data, len(data["sentence_label"]), 9)  # other类的sdp结果不翻转，恢复原序
         self.word_vec_matrix = data["word_vec_matrix"]
         self.num_train_data = 7109
         self.train_data = {
@@ -34,6 +36,13 @@ class DataGenerator(object):
         self._index_in_epoch = 0
         self._epochs_completed = 0
         self.shuffled_indices = np.random.permutation(np.arange(self.num_train_data))
+
+    def re_inverse(self, data, length, id):
+        for i in len(0, length):
+            if data["sentence_label"][i] == id:
+                data["sdp_rev_words_index"][i] = data["sdp_words_index"][i]
+                data["sdp_rev_rels_index"][i] = data["sdp_rels_index"][i]
+        return data
 
     def get_is_completed(self):
         if self._epochs_completed == 0:
