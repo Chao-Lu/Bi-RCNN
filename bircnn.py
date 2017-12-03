@@ -1,4 +1,4 @@
-import tensorflow as tf
+﻿import tensorflow as tf
 from config_environment import *
 from config_hyper_parameter import MyConfig
 from data_generator import *
@@ -290,8 +290,21 @@ def model(input_, word_vec_matrix_pretrained, keep_prob, config):
 
     return loss_avg, accuracy, prediction, optimizer, summary
 
-def train():
+def train(model_index=1):
     config = MyConfig()
+    if model_index == 1:
+        config.epochs = config.epoch1
+        config.inverse_other = True
+        config.has_corase_grained = True
+    elif model_index == 2:
+        config.epochs = config.epoch2
+        config.inverse_other = False
+        config.has_corase_grained = True
+    else:
+        config.epochs = config.epoch3
+        config.inverse_other = False
+        config.has_corase_grained = False
+
     file_name = "data/final_data/data_" + word_vec_file_state[config.file_index] + ".pkl"
     dg = DataGenerator(file_name)
     word_vec_matrix = dg.word_vec_matrix
@@ -421,6 +434,7 @@ def test(checkpoint_model):
         write_result(score_file, cat_names, test_prediction)
 
 if __name__ == "__main__":
-    train()
+
+    train(model_index=1)
     #test(checkpoint_model="./checkpoints/model.ckpt")
     pass
